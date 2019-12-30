@@ -1,0 +1,42 @@
+#include<iostream>
+class String
+{
+	char* string;
+public:
+	String(const char* string_)
+	{
+		string = new char[strlen(string_)+1];
+		strcpy_s(string, strlen(string_)+1, string_);
+	}
+	String() :String("") {};
+	~String()
+	{
+		delete[] string;
+	}
+	void operator = (const String& rhs)
+	{
+		if (strlen(string) + 1 > strlen(rhs.string) + 1)
+		{
+			strcpy_s(string, strlen(rhs.string) + 1, rhs.string);
+		}
+		else
+		{
+			delete[] string;
+			string = new char[strlen(rhs.string) + 1];
+			strcpy_s(string, strlen(rhs.string) + 1, rhs.string);
+		}
+	}
+	friend std::ostream& operator<<(std::ostream& out, String& str);
+};
+std::ostream& operator<<(std::ostream& out,String& str)
+{
+	out << str.string;
+	return out;
+}
+int main()
+{
+	String s1{"Head"};
+	String s2;
+	s2 = s1;
+	std::cout << s2;
+}
