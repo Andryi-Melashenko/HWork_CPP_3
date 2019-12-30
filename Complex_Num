@@ -1,0 +1,119 @@
+#include <iostream>
+class Complex
+{
+	double num1, subNum;
+public:
+	Complex() = default;
+	~Complex() = default;
+	Complex(double r)
+	{
+		num1= r;
+		subNum = 0;
+	}
+	Complex(double r, double i)
+	{
+		num1= r;
+		subNum = i;
+	}
+	Complex(const Complex& c)
+	{
+		num1= c.num1;
+		subNum = c.subNum;
+	}
+	double abs()
+	{
+		return sqrt(num1*num1+ subNum * subNum);
+	}
+	Complex& operator = (Complex& c)
+	{
+		num1 = c.num1;
+		subNum = c.subNum;
+		return (*this);
+	}
+	Complex& operator = (const Complex& c)
+	{
+		num1 = c.num1;
+		subNum = c.subNum;
+		return (*this);
+	}
+	Complex& operator += (Complex& c)
+	{
+		num1+= c.num1;
+		subNum += c.subNum;
+		return *this;
+	}
+	Complex& operator -= (Complex& c)
+	{
+		num1 -= c.num1;
+		subNum -= c.subNum;
+		return *this;
+	}
+	Complex& operator *= (Complex& c)
+	{
+		num1 *= c.num1;
+		subNum *= c.subNum;
+		return *this;
+	}
+	Complex& operator /= (Complex& c)
+	{
+		num1 /= c.num1;
+		subNum /= c.subNum;
+		return *this;
+	}
+	Complex operator + (const Complex& c)
+	{
+		return Complex(num1+ c.num1, subNum + c.subNum);
+	}
+	Complex operator - (const Complex& c)
+	{
+		return Complex(num1- c.num1, subNum - c.subNum);
+	}
+	Complex operator * (const Complex& c)
+	{
+		return Complex(num1* c.num1- subNum * c.subNum,num1* c.subNum + subNum * c.num1);
+	}
+	Complex operator / (const Complex& c)
+	{
+		Complex temp;
+
+		double r = c.num1* c.num1+ c.subNum * c.subNum;
+		temp.num1= (num1* c.num1+ subNum * c.subNum) / r;
+		temp.subNum = (subNum * c.num1-num1* c.subNum) / r;
+
+		return temp;
+	}
+	friend std:: ostream& operator<< (std:: ostream&, const Complex&);
+	friend std:: istream& operator>> (std:: istream&, Complex&);
+};
+std:: ostream& operator<< (std:: ostream& out, const Complex& c)
+{
+	out << "(" << c.num1<< ", " << c.subNum << ")";
+	return out;
+}
+std:: istream& operator>> (std:: istream& in, Complex& c)
+{
+	std::cout << "Enter num_";
+	in >> c.num1;
+	std::cout << "Enter Subnum_";
+	in>> c.subNum;
+	return in;
+}
+
+int main()
+{
+	Complex a(5, 2);
+	Complex b(3, -3),c;
+	std::string menu;
+	std::cout << "Enter c\n";
+	std::cin >> c;
+	while (1)
+	{
+		system("cls");
+		std::cout << "a = " << a << ";\t b =" << b << std::endl;
+		std::cout <<c<< "\nc = \n Enter +,-,*,/,+=,-=,*=,/=\n Enter_";
+		std::cin >> menu;
+		c = (menu == "+" ? a + b : (menu == "-" ? a - b : (menu == "*" ? a * b : (menu == "/" ? a / b : c))));
+		c = (menu == "+=" ? a += b : (menu == "-=" ? a -= b : (menu == "*=" ? a *= b : (menu == "/=" ? a /= b : c))));
+	}
+
+}
