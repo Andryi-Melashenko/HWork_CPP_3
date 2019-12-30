@@ -1,0 +1,226 @@
+#include <iostream>
+using namespace std;
+class Fraction
+{
+	int Numerator;
+	int Denominator;
+	friend istream& operator >> (istream& in, Fraction& rhs);
+	friend ostream& operator<<(ostream& out, const Fraction& rhs);
+	friend Fraction operator * (const Fraction& lhs, const Fraction& rhs);
+	friend Fraction operator/(const Fraction& lhs, const Fraction& rhs);
+	friend Fraction operator+(const Fraction& lhs, const Fraction& rhs);
+	friend Fraction operator-(const Fraction& lhs, const Fraction& rhs);
+public:
+	Fraction() : Fraction(0, 1) {};
+	Fraction(int num) : Fraction(num, 1) {};
+	Fraction(int num, int denom) :Numerator{ num }, Denominator{ denom == 0 ? 1 : denom }{scorot(); };
+	void SetNumerator(int num)
+	{
+		Numerator = num;
+	}
+	void SerDenominator(int denom)
+	{
+		Denominator = denom;
+		perevirka();
+	}
+	int GetNumer()
+	{
+		return Numerator;
+	}
+	int GetDenomin()
+	{
+		return Denominator;
+	}
+	bool perevirka()
+	{
+		if (Denominator == 0)
+		{
+			Denominator = 1;
+			return 0;
+		}
+		return 1;
+	}
+	Fraction& operator+=(const Fraction& rhs)
+	{
+		*this = *this + rhs;
+		return *this;
+	}
+	Fraction& operator-=(const Fraction& rhs)
+	{
+		*this = *this - rhs;
+		return *this;
+	}
+	Fraction& operator++()
+	{
+		Numerator += Denominator;
+		scorot();
+		return *this;
+	}
+	Fraction& operator--()
+	{
+		Numerator -= Denominator;
+		perevirka();
+		return *this;
+	}
+	Fraction& operator++(int)
+	{
+		Fraction tmp{ *this };
+		++(*this);
+		return tmp;
+	}
+	Fraction operator--(int)
+	{
+		Fraction tmp{ *this };
+		--(*this);
+		return tmp;
+	}
+	Fraction& operator*=(const Fraction& rhs)
+	{
+		*this = *this * rhs;
+		scorot();
+		return *this;
+	}
+	Fraction& operator/=(const Fraction& rhs)
+	{
+		*this = *this / rhs;
+		scorot();
+		return *this;
+	}
+	static int  SpilnZnam(int num1, int num2)
+	{
+		if (!num1)
+		{
+			return num2;
+		}
+		if (!num2)
+		{
+			return num1;
+		}
+		if ((num1 % num2 == 0))
+		{
+			return num1;
+		}
+		if (!(num2 % num1))
+		{
+			return num2;
+		}
+		while (num2)
+		{
+			num1 %= num2;
+			swap(num1, num2);
+		}
+		return  num1;
+	}
+	int dilnik(int num1,int num2)
+	{
+		while (num2)
+		{
+			num1 %= num2;
+			swap(num1, num2);
+		}
+		return  num1;
+	}
+	void scorot()
+	{
+		int scorott = dilnik(Numerator, Denominator);
+		Numerator /= scorott;
+		Denominator /= scorott;
+		if ((Denominator < 0) &&( Numerator < 0))
+		{
+			Denominator *= -1;
+			Numerator *= -1;
+		}
+	}
+
+};
+istream& operator >> (istream& in, Fraction& rhs)
+{
+	cout << "Enter Numerator_";
+	in >> rhs.Numerator;
+	cout << "Enter Denominator_";
+	in >> rhs.Denominator;
+	rhs.Denominator = (rhs.Denominator ? rhs.Denominator : 1);
+	rhs.perevirka();
+	rhs.scorot();
+	return in;
+}
+ostream& operator<<(ostream& out, const Fraction& rhs)
+{
+	if (rhs.Numerator == rhs.Denominator)
+	{
+		out << 1;
+		return out;
+	}
+
+	if (rhs.Denominator == 1)
+	{
+		out << rhs.Numerator;
+		return out;
+	}
+	if (rhs.Numerator > rhs.Denominator)
+	{
+		out << ' ' << rhs.Numerator - ((rhs.Numerator / rhs.Denominator) * rhs.Denominator) << endl << (rhs.Numerator / rhs.Denominator) << "-\n" << ' ' << rhs.Denominator;
+		return out;
+	}
+	if (rhs.Numerator < rhs.Denominator)
+	{
+		int Num = rhs.Numerator > 0 ? rhs.Numerator : rhs.Numerator * -1, Denom = rhs.Denominator > 0 ? rhs.Denominator : rhs.Denominator * -1;
+		out << " " << Num - ((Num / Denom) * rhs.Denominator) << endl;
+		if (rhs.Numerator % rhs.Denominator)
+		{
+			out << " ";
+		}
+		else
+		{
+			out << (rhs.Numerator / rhs.Denominator);
+		}
+		out << "-\n" << " " << rhs.Denominator;
+		return out;
+	}
+	out << rhs.Numerator << endl << rhs.Denominator;
+	return out;
+}
+Fraction operator * (const Fraction& lhs, const Fraction& rhs)
+{
+	return (Fraction{ lhs.Numerator * rhs.Numerator, lhs.Denominator * rhs.Denominator });
+}
+Fraction operator/(const Fraction& lhs, const Fraction& rhs)
+{
+	return Fraction{ lhs.Numerator * rhs.Denominator, lhs.Denominator * rhs.Numerator };
+}
+Fraction operator+(const Fraction& lhs, const Fraction& rhs)
+{
+	return Fraction(lhs.Numerator * rhs.Denominator + rhs.Numerator * lhs.Denominator, rhs.Denominator * lhs.Denominator);
+}
+Fraction operator-(const Fraction& lhs, const Fraction& rhs)
+{
+	if (rhs.Denominator == lhs.Denominator)
+	{
+		return Fraction(lhs.Numerator - rhs.Numerator, lhs.Denominator);
+	}
+	int spilnZnam = Fraction::SpilnZnam(lhs.Denominator, rhs.Denominator);
+	return Fraction((spilnZnam / lhs.Denominator)*lhs.Numerator - (spilnZnam / rhs.Denominator)*rhs.Numerator, spilnZnam);
+	return Fraction(lhs.Numerator * rhs.Denominator - rhs.Numerator * lhs.Denominator, spilnZnam);
+}
+
+int main()
+{
+	Fraction F,copy,work;
+	cin >> F;
+	work = F;
+	string menu;
+	while (1)
+	{
+		system("cls");
+		cout << F << endl;
+		cout << "\n\t\tYou can\n\n+ ,- , * , / , += , -= , *= ,/= " << endl << "Your result : \n"<< copy<< endl << "Enter_" ;
+		cin >> menu;
+		cin >> work;
+		copy = (menu == "+" ?( F + work) : (menu == "-" ? (F - work ): (menu == "*" ? (F * work) : (menu == "/" ?( F / work):F))));
+		copy = (menu == "+=" ? F += work : (menu == "-=" ? F -= work : (menu == "*=" ? F *= work : (menu == "/=" ? F /= work :copy))));
+		if (menu == "X")
+		{
+			return 0;
+		}
+	}
+}
