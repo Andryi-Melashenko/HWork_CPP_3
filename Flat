@@ -1,0 +1,40 @@
+#include<iostream>
+class Flat
+{
+	size_t area;
+	size_t price;
+public:
+	Flat(size_t area_, size_t price_) :area{ area_ }, price{ price_ }{};
+	Flat() :Flat(120, 10) {};
+	bool operator==(const Flat& rhs)
+	{
+		if (area > rhs.area)
+		{
+			return true;
+		}
+		return false;
+	}
+	void operator =(const Flat& rhs)
+	{
+		area = rhs.area;
+		price = rhs.price;
+	}
+	bool operator >(const Flat& rhs)
+	{
+		if (price > rhs.price)
+		{
+			return true;
+		}
+		return false;
+	}
+};
+int main()
+{
+	Flat D{ 150,12 };
+	Flat G{ 844,13 };
+	Flat D2{ 150,13 };
+	std::cout << (D > D2) << std::endl;
+	std::cout << (D2 == D) << std::endl;
+	G = D;
+	std::cout << (G == D2);
+}
