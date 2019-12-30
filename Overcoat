@@ -1,0 +1,55 @@
+#include<iostream>
+class Overcoat
+{
+	char* type;
+	size_t price;
+public:
+	Overcoat(const char* type_, size_t price_) :price{ price_ }
+	{
+		type = new char[strlen(type_) + 1];
+		strcpy_s(type, strlen(type_)+1, type_);
+	}
+	Overcoat() :Overcoat("nothing", 10) {};
+	bool operator==(const Overcoat& rhs)
+	{
+		if (!strcmp(type, rhs.type))
+		{
+			return true;
+		}
+		return false;
+	}
+	void operator =(const Overcoat& rhs)
+	{
+		if (strlen(type) + 1 > strlen(rhs.type) + 1)
+		{
+			strcpy_s(type, strlen(rhs.type) + 1, rhs.type);
+		}
+		else
+		{
+			delete[] type;
+			type = new char[strlen(rhs.type) + 1];
+			strcpy_s(type, strlen(rhs.type) + 1, rhs.type);
+		}
+	}
+	bool operator >(const Overcoat& rhs)
+	{
+		if (*this == rhs)
+		{
+			if (price > rhs.price)
+			{
+				return true;
+			}
+			return false;
+		}
+	}
+};
+int main()
+{
+	Overcoat D{ "lool",12 };
+	Overcoat G{ "poop",13 };
+	Overcoat D2{ "lool",13 };
+	std::cout << (D > D2) << std::endl;
+	std::cout << (D2== D) << std::endl;
+	G = D;
+	std::cout << (G == D2);
+}
