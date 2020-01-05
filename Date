@@ -1,0 +1,70 @@
+#include <iostream>
+class Date
+{
+	int day;
+	int month;
+	int year;
+	static const int  MaxMonth = 12;
+	static enum Month{January = 1, February, March,April,May,Jun ,July,August,September,October,November, December};
+public:
+	Date(int d, int m, int y) :day{ d }, month{ m }, year{ y }{check(); };
+	Date() :Date(10, 9, 2017) {};
+	Date getDate()
+	{
+		return *this;
+	}
+	int getMaxDayInMonth()
+	{
+		int mmonth = month + 1;
+		if (mmonth == 2)
+		{
+			if ((year % 4 == 0) and (year % 100 != 0) and (year % 400 == 0))
+			{
+				return 29;
+			}
+			else
+			{
+				return 28;
+			}
+		}
+		return (mmonth <= 7 ? (mmonth % 2 == 0 ? 30 : 31) : (mmonth % 2 == 0 ? 31 : 30));
+	}
+	void check()
+	{
+		while (1)
+		{
+			if (day >= getMaxDayInMonth())
+			{
+				day -= getMaxDayInMonth();
+				++month;
+			}
+			if (month >= MaxMonth)
+			{
+				month -= MaxMonth;
+				year++;
+			}
+			if (month < MaxMonth and day < getMaxDayInMonth())
+			{
+				break;
+			}
+		}
+	}
+	void operator= (const Date rhs)
+	{
+		day = rhs.day;
+		month = rhs.month;
+		year = rhs.year;
+		check();
+	}
+	friend std::ostream& operator<< (std::ostream& out, Date rhs);
+};
+std::ostream& operator<< (std::ostream& out, Date rhs)
+{
+	out << rhs.day << " " << rhs.month << " " << rhs.year;
+	return out;
+}
+int main()
+{
+	Date DD{ 365,0,0 };
+	std::cout << DD;
+}
