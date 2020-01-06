@@ -1,0 +1,82 @@
+#include<iostream>
+class String
+{
+	char* string;
+public:
+	String(const char* string_)
+	{
+		string = new char[strlen(string_) + 1];
+		strcpy_s(string, strlen(string_) + 1, string_);
+	}
+	String() :String("") {};
+	~String()
+	{
+		delete[] string;
+	}
+	size_t getSize()
+	{
+		return strlen(string);
+	}
+	void operator = (const String& rhs)
+	{
+		if (strlen(string) + 1 > strlen(rhs.string) + 1)
+		{
+			strcpy_s(string, strlen(rhs.string) + 1, rhs.string);
+		}
+		else
+		{
+			delete[] string;
+			string = new char[strlen(rhs.string) + 1];
+			strcpy_s(string, strlen(rhs.string) + 1, rhs.string);
+		}
+	}
+	char operator [](size_t idx)
+	{
+		return string[idx];
+		//Aбо...
+		return *(string + idx);
+		//Якщо треба 2 то просто поміняти місцями щоб працювало
+	}
+	int operator ()(const char obj)
+	{
+		for (int i = 0; i < strlen(string); ++i)
+		{
+			if (obj == string[i])
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+	bool operator ==(const String& str)
+	{
+
+	}
+	friend std::ostream& operator<<(std::ostream& out, String& str);
+	friend std::istream& operator>>(std::istream& in, String& str);
+};
+std::istream& operator>>(std::istream& in, String& str)
+{
+	in >> str.string;
+	return in;
+}
+std::ostream& operator<<(std::ostream& out, String& str)
+{
+	out << str.string;
+	return out;
+}
+int main()
+{
+	String s1{ "Head" };
+	String menu;
+	while (1)
+	{
+		system("cls");
+		std::cout << s1;
+		std::cout << "Use new string or Old (1/2)\nEnter_";
+		std::cin >> menu;
+		if (menu == "1")
+		std::cout << "\nEnter you string_";
+		std::cin >> s1;
+	}
+}
