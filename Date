@@ -49,22 +49,311 @@ public:
 			}
 		}
 	}
-	void operator= (const Date rhs)
+	Date& operator= (const Date& rhs)
 	{
 		day = rhs.day;
 		month = rhs.month;
 		year = rhs.year;
 		check();
+		return *this;
 	}
-	friend std::ostream& operator<< (std::ostream& out, Date rhs);
+	Date operator +(const Date& rhs)
+	{
+		return (Date{ day + rhs.day,month + rhs.month, year + rhs.year });
+	}
+	Date operator +=(const Date& rhs)
+	{
+		return (*this = *this + rhs);
+	}
+	Date operator -(const Date& rhs)
+	{
+		return (Date{ day - rhs.day,month - rhs.month, year - rhs.year });
+	}
+	Date operator -=(const Date& rhs)
+	{
+		return (*this = *this - rhs);
+	}
+	Date operator *(const Date& rhs)
+	{
+		return (Date{ day * rhs.day,month * rhs.month, year * rhs.year });
+	}
+	Date operator *=(const Date& rhs)
+	{
+		return (*this = *this * rhs);
+	}
+	Date operator /(const Date& rhs)
+	{
+		return (Date{ day / rhs.day,month / rhs.month, year / rhs.year });
+	}
+	Date operator /=(const Date& rhs)
+	{
+		return (*this = *this / rhs);
+	}
+	Date& operator ++()
+	{
+		*this += Date{ 1,1,1 };
+		return *this;
+	}
+	Date& operator ++(int)
+	{
+		Date copy{ *this };
+		(*this)++;
+		return copy;
+	}
+	Date& operator --()
+	{
+		*this -= Date{ 1,1,1 };
+		return *this;
+	}
+	Date& operator --(int)
+	{
+		Date copy{ *this };
+		(*this)--;
+		return copy;
+	}
+	bool operator >(const Date& rhs)
+	{
+		return (day > rhs.day and month > rhs.month and year > rhs.year);
+	}
+	bool operator < (const Date& rhs)
+	{
+		return (!(*this > rhs));
+	}
+	bool operator ==(const Date& rhs)
+	{
+		return (day == rhs.day and month == rhs.month and year == rhs.year);
+	}
+	bool operator !=(const Date& rhs)
+	{
+		return (!(*this == rhs));
+	}
+
+	friend std::ostream& operator<< (std::ostream& out,const  Date& rhs);
+	friend std::istream& operator>> (std::istream& in, Date& rhs);
 };
-std::ostream& operator<< (std::ostream& out, Date rhs)
+std::istream& operator>> (std::istream& in, Date& rhs)
+{
+	std::cout << "Enter day_";
+	in >> rhs.day;
+	std::cout << "Enter(num) month_";
+	in >> rhs.month;
+	std::cout << "Enter year_";
+	in >> rhs.year;
+	rhs.check();
+	return in;
+}
+std::ostream& operator<< (std::ostream& out, const Date& rhs)
 {
 	out << rhs.day << " " << rhs.month << " " << rhs.year;
 	return out;
 }
 int main()
 {
-	Date DD{ 365,0,0 };
-	std::cout << DD;
+	Date date,dateV2, result;
+	std:: string menu = " ";
+	std::cin >> date;
+	std::cout << std::endl;
+	std::cin >> dateV2;
+	while (1)
+	{
+		system("cls");
+		if (menu == "+" or menu == "-" or menu == "*" or menu == "/")
+		{
+			std::cout << (menu == "+"?(date + dateV2): (menu == "-"? (date - dateV2):(menu == "*"?(date * dateV2): (menu == "/"?(date / dateV2): date))));
+		}
+		if (menu == "+=" or menu == "-=" or menu == "*=" or menu == "/=")
+		{
+			std::cout << (menu == "+=" ? (date += dateV2) : (menu == "-=" ? (date -= dateV2) : (menu == "*=" ? (date *= dateV2) : (menu == "/=" ? (date /= dateV2) : date))));
+		}
+		std::cout << std :: endl <<"Your date is _"<< date;
+		std::cout << std::endl << "\nDate 2 is    _" << dateV2;
+		std::cout << "\nEnter -,+,*,/,+=,-=,*=,/=\nEnter_";
+		std::cin >> menu;
+		std::cout << "1. new Data, 2. Old data";
+		char pp;
+		std::cin >> pp;
+		if (pp == '1')
+		{
+			std::cin >> dateV2;
+		}
+	}
+}
+class Date
+{
+	int day;
+	int month;
+	int year;
+	static const int  MaxMonth = 12;
+	static enum Month{January = 1, February, March,April,May,Jun ,July,August,September,October,November, December};
+public:
+	Date(int d, int m, int y) :day{ d }, month{ m }, year{ y }{check(); };
+	Date() :Date(10, 9, 2017) {};
+	Date getDate()
+	{
+		return *this;
+	}
+	int getMaxDayInMonth()
+	{
+		int mmonth = month + 1;
+		if (mmonth == 2)
+		{
+			if ((year % 4 == 0) and (year % 100 != 0) and (year % 400 == 0))
+			{
+				return 29;
+			}
+			else
+			{
+				return 28;
+			}
+		}
+		return (mmonth <= 7 ? (mmonth % 2 == 0 ? 30 : 31) : (mmonth % 2 == 0 ? 31 : 30));
+	}
+	void check()
+	{
+		while (1)
+		{
+			if (day >= getMaxDayInMonth())
+			{
+				day -= getMaxDayInMonth();
+				++month;
+			}
+			if (month >= MaxMonth)
+			{
+				month -= MaxMonth;
+				year++;
+			}
+			if (month < MaxMonth and day < getMaxDayInMonth())
+			{
+				break;
+			}
+		}
+	}
+	Date& operator= (const Date& rhs)
+	{
+		day = rhs.day;
+		month = rhs.month;
+		year = rhs.year;
+		check();
+		return *this;
+	}
+	Date operator +(const Date& rhs)
+	{
+		return (Date{ day + rhs.day,month + rhs.month, year + rhs.year });
+	}
+	Date operator +=(const Date& rhs)
+	{
+		return (*this = *this + rhs);
+	}
+	Date operator -(const Date& rhs)
+	{
+		return (Date{ day - rhs.day,month - rhs.month, year - rhs.year });
+	}
+	Date operator -=(const Date& rhs)
+	{
+		return (*this = *this - rhs);
+	}
+	Date operator *(const Date& rhs)
+	{
+		return (Date{ day * rhs.day,month * rhs.month, year * rhs.year });
+	}
+	Date operator *=(const Date& rhs)
+	{
+		return (*this = *this * rhs);
+	}
+	Date operator /(const Date& rhs)
+	{
+		return (Date{ day / rhs.day,month / rhs.month, year / rhs.year });
+	}
+	Date operator /=(const Date& rhs)
+	{
+		return (*this = *this / rhs);
+	}
+	Date& operator ++()
+	{
+		*this += Date{ 1,1,1 };
+		return *this;
+	}
+	Date& operator ++(int)
+	{
+		Date copy{ *this };
+		(*this)++;
+		return copy;
+	}
+	Date& operator --()
+	{
+		*this -= Date{ 1,1,1 };
+		return *this;
+	}
+	Date& operator --(int)
+	{
+		Date copy{ *this };
+		(*this)--;
+		return copy;
+	}
+	bool operator >(const Date& rhs)
+	{
+		return (day > rhs.day and month > rhs.month and year > rhs.year);
+	}
+	bool operator < (const Date& rhs)
+	{
+		return (!(*this > rhs));
+	}
+	bool operator ==(const Date& rhs)
+	{
+		return (day == rhs.day and month == rhs.month and year == rhs.year);
+	}
+	bool operator !=(const Date& rhs)
+	{
+		return (!(*this == rhs));
+	}
+
+	friend std::ostream& operator<< (std::ostream& out,const  Date& rhs);
+	friend std::istream& operator>> (std::istream& in, Date& rhs);
+};
+std::istream& operator>> (std::istream& in, Date& rhs)
+{
+	std::cout << "Enter day_";
+	in >> rhs.day;
+	std::cout << "Enter(num) month_";
+	in >> rhs.month;
+	std::cout << "Enter year_";
+	in >> rhs.year;
+	rhs.check();
+	return in;
+}
+std::ostream& operator<< (std::ostream& out, const Date& rhs)
+{
+	out << rhs.day << " " << rhs.month << " " << rhs.year;
+	return out;
+}
+int main()
+{
+	Date date,dateV2, result;
+	std:: string menu = " ";
+	std::cin >> date;
+	std::cout << std::endl;
+	std::cin >> dateV2;
+	while (1)
+	{
+		system("cls");
+		if (menu == "+" or menu == "-" or menu == "*" or menu == "/")
+		{
+			std::cout << (menu == "+"?(date + dateV2): (menu == "-"? (date - dateV2):(menu == "*"?(date * dateV2): (menu == "/"?(date / dateV2): date))));
+		}
+		if (menu == "+=" or menu == "-=" or menu == "*=" or menu == "/=")
+		{
+			std::cout << (menu == "+=" ? (date += dateV2) : (menu == "-=" ? (date -= dateV2) : (menu == "*=" ? (date *= dateV2) : (menu == "/=" ? (date /= dateV2) : date))));
+		}
+		std::cout << std :: endl <<"Your date is _"<< date;
+		std::cout << std::endl << "\nDate 2 is    _" << dateV2;
+		std::cout << "\nEnter -,+,*,/,+=,-=,*=,/=\nEnter_";
+		std::cin >> menu;
+		std::cout << "1. new Data, 2. Old data";
+		char pp;
+		std::cin >> pp;
+		if (pp == '1')
+		{
+			std::cin >> dateV2;
+		}
+	}
 }
